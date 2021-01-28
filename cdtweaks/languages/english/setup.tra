@@ -1408,20 +1408,35 @@ Enter a percentage between 20 and 500:~
 @330000 = ~Death Cam~
 @331000 = ~Start New Games with Party AI Turned Off~
 @332000 = ~No Depreciation in Stores~
-@333000 = ~Increase party movement speed outside combat~
-@333001 = ~By 50 percent~
-@333002 = ~By 100 percent~
-@333003 = ~By 150 percent~
-@333010 = ~Disable Auto-haste~
-@333011 = ~Disable Auto-haste
+@333000 = ~Increase party movement speed and/or casting speed outside of combat~
+@333001 = ~Movement speed by 50 percent~
+@333002 = ~Movement speed by 100 percent~
+@333003 = ~Movement speed by 150 percent~
+@333004 = ~Movement speed by 50 percent and casting speed~
+@333005 = ~Movement speed by 100 percent and casting speed~
+@333006 = ~Movement speed by 150 percent and casting speed~
+@333007 = ~Casting speed only~
+@333050 = ~Disable Auto-haste~
+@333051 = ~Disable Auto-haste
 
-This ability controls whether party members can move at increased speed outside of combat. Click on the ability to turn it OFF.~
+This ability controls whether movement speed is increased for party members outside of combat. Click on the ability to turn it OFF.~
+@333052 = ~Disable Auto-haste
 
-@333012 = ~Enable Auto-haste~
-@333013 = ~Enable Auto-haste
+This ability controls whether movement speed and casting speed are increased for party members outside of combat. Click on the ability to turn it OFF.~
+@333053 = ~Disable Auto-haste
 
-This ability controls whether party members can move at increased speed outside of combat. Click on the ability to turn it ON.~
-@333020 = ~Movement speed bonus removed~
+This ability controls whether casting speed is increased for party members outside of combat. Click on the ability to turn it OFF.~
+@333060 = ~Enable Auto-haste~
+@333061 = ~Enable Auto-haste
+
+This ability controls whether movement speed is increased for party members outside of combat. Click on the ability to turn it ON.~
+@333062 = ~Enable Auto-haste
+
+This ability controls whether movement speed and casting speed are increased for party members outside of combat. Click on the ability to turn it ON.~
+@333063 = ~Enable Auto-haste
+
+This ability controls whether casting speed is increased for party members outside of combat. Click on the ability to turn it ON.~
+@333070 = ~Auto-haste bonuses removed~
 @335000 = ~Create interval saves~
 @335001 = ~Every 15 minutes (one save only)~
 @335002 = ~Every 30 minutes (one save only)~

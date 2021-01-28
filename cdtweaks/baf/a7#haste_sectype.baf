@@ -3,211 +3,34 @@
 IF
   Global("A7_AutoHasteActive","GLOBAL",1)
   OR(2)
-    !GlobalTimerNotExpired("A7_AutoHasteTimerP1","GLOBAL")
-    TriggerOverride(Player1,Global("A7_AutoHasteActive","LOCALS",0))
-  !TriggerOverride(Player1,Detect([ENEMY]))
+    !GlobalTimerNotExpired("A7_AutoHasteTimer%suffix%","GLOBAL")
+    TriggerOverride(%player%,Global("A7_AutoHasteActive","LOCALS",0))
+  !TriggerOverride(%player%,Detect([ENEMY]))
   !ActuallyInCombat()
 THEN
   RESPONSE #100
-    SetGlobalTimer("A7_AutoHasteTimerP1","GLOBAL",6)
-    ApplySpellRES("a7_wlk1",Player1)
+    SetGlobalTimer("A7_AutoHasteTimer%suffix%","GLOBAL",6)
+    ApplySpellRES("a7_wlk1",%player%)
     Continue()
 END
 
 IF
   Global("A7_AutoHasteActive","GLOBAL",1)
+  !TriggerOverride(%player%,Global("A7_AutoHasteActive","LOCALS",0))
   OR(2)
-    !GlobalTimerNotExpired("A7_AutoHasteTimerP2","GLOBAL")
-    TriggerOverride(Player2,Global("A7_AutoHasteActive","LOCALS",0))
-  !TriggerOverride(Player2,Detect([ENEMY]))
-  !ActuallyInCombat()
-THEN
-  RESPONSE #100
-    SetGlobalTimer("A7_AutoHasteTimerP2","GLOBAL",6)
-    ApplySpellRES("a7_wlk1",Player2)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  OR(2)
-    !GlobalTimerNotExpired("A7_AutoHasteTimerP3","GLOBAL")
-    TriggerOverride(Player3,Global("A7_AutoHasteActive","LOCALS",0))
-  !TriggerOverride(Player3,Detect([ENEMY]))
-  !ActuallyInCombat()
-THEN
-  RESPONSE #100
-    SetGlobalTimer("A7_AutoHasteTimerP3","GLOBAL",6)
-    ApplySpellRES("a7_wlk1",Player3)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  OR(2)
-    !GlobalTimerNotExpired("A7_AutoHasteTimerP4","GLOBAL")
-    TriggerOverride(Player4,Global("A7_AutoHasteActive","LOCALS",0))
-  !TriggerOverride(Player4,Detect([ENEMY]))
-  !ActuallyInCombat()
-THEN
-  RESPONSE #100
-    SetGlobalTimer("A7_AutoHasteTimerP4","GLOBAL",6)
-    ApplySpellRES("a7_wlk1",Player4)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  OR(2)
-    !GlobalTimerNotExpired("A7_AutoHasteTimerP5","GLOBAL")
-    TriggerOverride(Player5,Global("A7_AutoHasteActive","LOCALS",0))
-  !TriggerOverride(Player5,Detect([ENEMY]))
-  !ActuallyInCombat()
-THEN
-  RESPONSE #100
-    SetGlobalTimer("A7_AutoHasteTimerP5","GLOBAL",6)
-    ApplySpellRES("a7_wlk1",Player5)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  OR(2)
-    !GlobalTimerNotExpired("A7_AutoHasteTimerP6","GLOBAL")
-    TriggerOverride(Player6,Global("A7_AutoHasteActive","LOCALS",0))
-  !TriggerOverride(Player6,Detect([ENEMY]))
-  !ActuallyInCombat()
-THEN
-  RESPONSE #100
-    SetGlobalTimer("A7_AutoHasteTimerP6","GLOBAL",6)
-    ApplySpellRES("a7_wlk1",Player6)
-    Continue()
-END
-
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  !TriggerOverride(Player1,Global("A7_AutoHasteActive","LOCALS",0))
-  OR(2)
-    TriggerOverride(Player1,Detect([ENEMY]))
+    TriggerOverride(%player%,Detect([ENEMY]))
     ActuallyInCombat()
 THEN
   RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player1)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  !TriggerOverride(Player2,Global("A7_AutoHasteActive","LOCALS",0))
-  OR(2)
-    TriggerOverride(Player2,Detect([ENEMY]))
-    ActuallyInCombat()
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player2)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  !TriggerOverride(Player3,Global("A7_AutoHasteActive","LOCALS",0))
-  OR(2)
-    TriggerOverride(Player3,Detect([ENEMY]))
-    ActuallyInCombat()
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player3)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  !TriggerOverride(Player4,Global("A7_AutoHasteActive","LOCALS",0))
-  OR(2)
-    TriggerOverride(Player4,Detect([ENEMY]))
-    ActuallyInCombat()
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player4)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  !TriggerOverride(Player5,Global("A7_AutoHasteActive","LOCALS",0))
-  OR(2)
-    TriggerOverride(Player5,Detect([ENEMY]))
-    ActuallyInCombat()
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player5)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  !TriggerOverride(Player6,Global("A7_AutoHasteActive","LOCALS",0))
-  OR(2)
-    TriggerOverride(Player6,Detect([ENEMY]))
-    ActuallyInCombat()
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player6)
-    Continue()
-END
-
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",0)
-  !TriggerOverride(Player1,Global("A7_AutoHasteActive","LOCALS",0))
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player1)
+    ApplySpellRES("a7_wlk2",%player%)
     Continue()
 END
 
 IF
   Global("A7_AutoHasteActive","GLOBAL",0)
-  !TriggerOverride(Player2,Global("A7_AutoHasteActive","LOCALS",0))
+  !TriggerOverride(%player%,Global("A7_AutoHasteActive","LOCALS",0))
 THEN
   RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player2)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",0)
-  !TriggerOverride(Player3,Global("A7_AutoHasteActive","LOCALS",0))
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player3)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",0)
-  !TriggerOverride(Player4,Global("A7_AutoHasteActive","LOCALS",0))
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player4)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",0)
-  !TriggerOverride(Player5,Global("A7_AutoHasteActive","LOCALS",0))
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player5)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",0)
-  !TriggerOverride(Player6,Global("A7_AutoHasteActive","LOCALS",0))
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player6)
+    ApplySpellRES("a7_wlk2",%player%)
     Continue()
 END

@@ -1,0 +1,38 @@
+// Controls auto-haste of selected familiar-type followers (fallback solution)
+
+IF
+  Global("A7_AutoHasteActive","GLOBAL",1)
+  Allegiance("%name%",FAMILIAR)
+  InMyArea("%name%")
+  OR(2)
+    !GlobalTimerNotExpired("A7_AutoHasteTimer_%suffix%","GLOBAL")
+    TriggerOverride("%name%",Global("A7_AutoHasteActive","LOCALS",0))
+  !TriggerOverride("%name%",Detect([ENEMY]))
+  !ActuallyInCombat()
+THEN
+  RESPONSE #100
+    SetGlobalTimer("A7_AutoHasteTimer_%suffix%","GLOBAL",6)
+    ApplySpellRES("a7_wlk1","%name%")
+    Continue()
+END
+
+IF
+  Global("A7_AutoHasteActive","GLOBAL",1)
+  !TriggerOverride("%name%",Global("A7_AutoHasteActive","LOCALS",0))
+  OR(2)
+    TriggerOverride("%name%",Detect([ENEMY]))
+    ActuallyInCombat()
+THEN
+  RESPONSE #100
+    ApplySpellRES("a7_wlk2","%name%")
+    Continue()
+END
+
+IF
+  Global("A7_AutoHasteActive","GLOBAL",0)
+  !TriggerOverride("%name%",Global("A7_AutoHasteActive","LOCALS",0))
+THEN
+  RESPONSE #100
+    ApplySpellRES("a7_wlk2","%name%")
+    Continue()
+END

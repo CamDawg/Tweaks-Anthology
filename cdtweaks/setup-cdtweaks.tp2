@@ -13212,13 +13212,14 @@ END
 /////\\\\\/////\\\\\/////\\\\\/////\\\\\/////\\\\\/////\\\\\
 /////\\\\\/////\\\\\/////\\\\\/////\\\\\/////\\\\\/////\\\\\
 /////                                                  \\\\\
-///// Increase party movement speed outside combat    \\\\\
+///// Increase party movement speed and/or casting     \\\\\
+///// speed outside of combat                          \\\\\
 /////                                                  \\\\\
 /////\\\\\/////\\\\\/////\\\\\/////\\\\\/////\\\\\/////\\\\\
 /////\\\\\/////\\\\\/////\\\\\/////\\\\\/////\\\\\/////\\\\\
 
 /////                                                  \\\\\
-///// By 50 percent                                    \\\\\
+///// Movement speed by 50 percent                     \\\\\
 /////                                                  \\\\\
 
 BEGIN @333001 DESIGNATED 3340
@@ -13229,7 +13230,10 @@ SUBCOMPONENT @333000
 INCLUDE ~cdtweaks/lib/increased_party_movement_speed.tpa~
 
 LAF A7_INSTALL_AUTOHASTE
-  INT_VAR speed_percent = 150
+  INT_VAR
+    casting_speed = 0
+    movement_speed = 1
+    speed_percent = 150
   RET success
 END
 
@@ -13238,7 +13242,7 @@ ACTION_IF (NOT success) BEGIN
 END
 
 /////                                                  \\\\\
-///// By 100 percent                                   \\\\\
+///// Movement speed by 100 percent                    \\\\\
 /////                                                  \\\\\
 
 BEGIN @333002 DESIGNATED 3341
@@ -13249,7 +13253,10 @@ SUBCOMPONENT @333000
 INCLUDE ~cdtweaks/lib/increased_party_movement_speed.tpa~
 
 LAF A7_INSTALL_AUTOHASTE
-  INT_VAR speed_percent = 200
+  INT_VAR
+    casting_speed = 0
+    movement_speed = 1
+    speed_percent = 200
   RET success
 END
 
@@ -13258,7 +13265,7 @@ ACTION_IF (NOT success) BEGIN
 END
 
 /////                                                  \\\\\
-///// By 150 percent                                   \\\\\
+///// Movement speed by 150 percent                    \\\\\
 /////                                                  \\\\\
 
 BEGIN @333003 DESIGNATED 3342
@@ -13269,7 +13276,101 @@ SUBCOMPONENT @333000
 INCLUDE ~cdtweaks/lib/increased_party_movement_speed.tpa~
 
 LAF A7_INSTALL_AUTOHASTE
-  INT_VAR speed_percent = 250
+  INT_VAR
+    casting_speed = 0
+    movement_speed = 1
+    speed_percent = 250
+  RET success
+END
+
+ACTION_IF (NOT success) BEGIN
+  ABORT @28
+END
+
+/////                                                  \\\\\
+///// Movement speed by 50 percent and casting speed   \\\\\
+/////                                                  \\\\\
+
+BEGIN @333004 DESIGNATED 3343
+GROUP @4
+REQUIRE_PREDICATE (NOT GAME_IS ~pstee~ && VALID_SCRIPT_TRIGGERS ~NextTriggerObject(Player1)~) @25
+SUBCOMPONENT @333000
+
+INCLUDE ~cdtweaks/lib/increased_party_movement_speed.tpa~
+
+LAF A7_INSTALL_AUTOHASTE
+  INT_VAR
+    casting_speed = 1
+    movement_speed = 1
+    speed_percent = 150
+  RET success
+END
+
+ACTION_IF (NOT success) BEGIN
+  ABORT @28
+END
+
+/////                                                  \\\\\
+///// Movement speed by 100 percent and casting speed  \\\\\
+/////                                                  \\\\\
+
+BEGIN @333005 DESIGNATED 3344
+GROUP @4
+REQUIRE_PREDICATE (NOT GAME_IS ~pstee~ && VALID_SCRIPT_TRIGGERS ~NextTriggerObject(Player1)~) @25
+SUBCOMPONENT @333000
+
+INCLUDE ~cdtweaks/lib/increased_party_movement_speed.tpa~
+
+LAF A7_INSTALL_AUTOHASTE
+  INT_VAR
+    casting_speed = 1
+    movement_speed = 1
+    speed_percent = 200
+  RET success
+END
+
+ACTION_IF (NOT success) BEGIN
+  ABORT @28
+END
+
+/////                                                  \\\\\
+///// Movement speed by 150 percent and casting speed  \\\\\
+/////                                                  \\\\\
+
+BEGIN @333006 DESIGNATED 3345
+GROUP @4
+REQUIRE_PREDICATE (NOT GAME_IS ~pstee~ && VALID_SCRIPT_TRIGGERS ~NextTriggerObject(Player1)~) @25
+SUBCOMPONENT @333000
+
+INCLUDE ~cdtweaks/lib/increased_party_movement_speed.tpa~
+
+LAF A7_INSTALL_AUTOHASTE
+  INT_VAR
+    casting_speed = 1
+    movement_speed = 1
+    speed_percent = 250
+  RET success
+END
+
+ACTION_IF (NOT success) BEGIN
+  ABORT @28
+END
+
+/////                                                  \\\\\
+///// Casting speed only                               \\\\\
+/////                                                  \\\\\
+
+BEGIN @333007 DESIGNATED 3346
+GROUP @4
+REQUIRE_PREDICATE (NOT GAME_IS ~pstee~ && VALID_SCRIPT_TRIGGERS ~NextTriggerObject(Player1)~) @25
+SUBCOMPONENT @333000
+
+INCLUDE ~cdtweaks/lib/increased_party_movement_speed.tpa~
+
+LAF A7_INSTALL_AUTOHASTE
+  INT_VAR
+    casting_speed = 1
+    movement_speed = 0
   RET success
 END
 

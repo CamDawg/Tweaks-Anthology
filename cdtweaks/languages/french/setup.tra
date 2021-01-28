@@ -1468,20 +1468,20 @@ Indiquez un pourcentage entre 20 et 500 : ~
 @330000 = ~Focus camera en cas de mort~
 @331000 = ~Demarrer les nouvelles parties avec l'IA de groupe desactivee~
 @332000 = ~Pas de depreciation dans les magasins~
-@333000 = ~Augmenter la vitesse de deplacement du groupe en dehors des combats~
-@333001 = ~De 50 pour cent~
-@333002 = ~De 100 pour cent~
-@333003 = ~De 150 pour cent~
-@333010 = ~Désactiver la Hâte automatique~
-@333011 = ~Désactiver la Hâte automatique
+// @333000 = ~Augmenter la vitesse de deplacement du groupe en dehors des combats~
+// @333001 = ~De 50 pour cent~
+// @333002 = ~De 100 pour cent~
+// @333003 = ~De 150 pour cent~
+@333050 = ~Désactiver la Hâte automatique~
+@333051 = ~Désactiver la Hâte automatique
 
 Cette compétence permet aux membres du groupe de se déplacer plus rapidement en dehors des combats. Cliquez sur la compétence pour la désactiver.~
 
-@333012 = ~Activer la Hâte automatique~
-@333013 = ~Activer la Hâte automatique
+@333060 = ~Activer la Hâte automatique~
+@333061 = ~Activer la Hâte automatique
 
 Cette compétence permet aux membres du groupe de se déplacer plus rapidement en dehors des combats. Cliquez sur la compétence pour l'activer.~
-@333020 = ~Bonus de vitesse de déplacement désactivé~
+@333070 = ~Bonus de vitesse de déplacement désactivé~
 @335000 = ~Creer des sauvegardes periodiques~
 @335001 = ~Toutes les 15 minutes (un emplacement de sauvegarde seulement)~
 @335002 = ~Toutes les 30 minutes (un emplacement de sauvegarde seulement)~

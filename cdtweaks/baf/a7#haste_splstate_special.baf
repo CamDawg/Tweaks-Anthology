@@ -1,0 +1,39 @@
+// Controls auto-haste of selected familiar-type followers (EE 2.0+ solution)
+
+IF
+  Global("A7_AutoHasteActive","GLOBAL",1)
+  !Name("%name%",Familiar)
+  Allegiance("%name%",FAMILIAR)
+  InMyArea("%name%")
+  OR(2)
+    !GlobalTimerNotExpired("A7_AutoHasteTimer_%suffix%","GLOBAL")
+    !CheckSpellState("%name%",A7_AUTO_SPEED)
+  !TriggerOverride("%name%",Detect([ENEMY]))
+  !ActuallyInCombat()
+THEN
+  RESPONSE #100
+    SetGlobalTimer("A7_AutoHasteTimer_%suffix%","GLOBAL",6)
+    ApplySpellRES("a7_wlk1","%name%")
+    Continue()
+END
+
+IF
+  Global("A7_AutoHasteActive","GLOBAL",1)
+  CheckSpellState("%name%",A7_AUTO_SPEED)
+  OR(2)
+    TriggerOverride("%name%",Detect([ENEMY]))
+    ActuallyInCombat()
+THEN
+  RESPONSE #100
+    ApplySpellRES("a7_wlk2","%name%")
+    Continue()
+END
+
+IF
+  Global("A7_AutoHasteActive","GLOBAL",0)
+  CheckSpellState("%name%",A7_AUTO_SPEED)
+THEN
+  RESPONSE #100
+    ApplySpellRES("a7_wlk2","%name%")
+    Continue()
+END

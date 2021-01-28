@@ -1,6 +1,8 @@
 // Installs increased movement speed outside of combat by the best method available for the game
 DEFINE_ACTION_FUNCTION A7_INSTALL_AUTOHASTE
 INT_VAR
+  casting_speed = 0
+  movement_speed = 1
   speed_percent = 100
 RET
   success
@@ -9,14 +11,14 @@ BEGIN
 
   ACTION_IF (GAME_IS ~bgee bg2ee iwdee eet~ && FILE_EXISTS ~engine.lua~) BEGIN
     LAF A7_INSTALL_AUTOHASTE_SPLSTATE
-      INT_VAR speed_percent
+      INT_VAR casting_speed movement_speed speed_percent
       RET success
     END
   END
 
   ACTION_IF (NOT success) BEGIN
     LAF A7_INSTALL_AUTOHASTE_SECTYPE
-      INT_VAR speed_percent
+      INT_VAR casting_speed movement_speed speed_percent
       RET success
     END
   END
@@ -26,81 +28,162 @@ END
 // Installs increased movement speed outside of combat via spellstate detection (compatible with: EE games 2.0+)
 DEFINE_ACTION_FUNCTION A7_INSTALL_AUTOHASTE_SPLSTATE
 INT_VAR
+  casting_speed = 0
+  movement_speed = 1
   speed_percent = 100
 RET
   success
 BEGIN
   OUTER_SET success = 0
 
-  ACTION_IF (speed_percent <= 0) BEGIN
-    OUTER_SET speed_percent = 100
-  END
+  ACTION_IF (casting_speed || movement_speed) BEGIN
+    ACTION_IF (speed_percent <= 0) BEGIN
+      OUTER_SET speed_percent = 100
+    END
 
-  // Install auto-haste functionality
-  OUTER_SET slot_autohaste = IDS_OF_SYMBOL(~splstate~ ~A7_AUTO_SPEED~)
-  ACTION_IF (slot_autohaste < 0) BEGIN
-    OUTER_PATCH ~~ BEGIN
-      FOR (idx = 100; idx < 256; ++idx) BEGIN
-        LOOKUP_IDS_SYMBOL_OF_INT value ~splstate~ idx
-        PATCH_IF (~%value%~ STR_EQ ~%idx%~) BEGIN
-          SET slot_autohaste = idx
-          SET idx = 256
+    // Install auto-haste functionality
+    OUTER_SET slot_autohaste = IDS_OF_SYMBOL(~splstate~ ~A7_AUTO_SPEED~)
+    ACTION_IF (slot_autohaste < 0) BEGIN
+      OUTER_PATCH ~~ BEGIN
+        FOR (idx = 100; idx < 256; ++idx) BEGIN
+          LOOKUP_IDS_SYMBOL_OF_INT value ~splstate~ idx
+          PATCH_IF (~%value%~ STR_EQ ~%idx%~) BEGIN
+            SET slot_autohaste = idx
+            SET idx = 256
+          END
         END
       END
+      ACTION_IF (slot_autohaste >= 0) BEGIN
+        APPEND ~splstate.ids~ ~%slot_autohaste% A7_AUTO_SPEED~ UNLESS ~A7_AUTO_SPEED~
+        CLEAR_IDS_MAP
+      END
     END
+
     ACTION_IF (slot_autohaste >= 0) BEGIN
-      APPEND ~splstate.ids~ ~%slot_autohaste% A7_AUTO_SPEED~ UNLESS ~A7_AUTO_SPEED~
-      CLEAR_IDS_MAP
+      COPY ~cdtweaks/spl/a7_wlk1.spl~ ~override~
+        PATCH_IF (movement_speed) BEGIN
+          LPF ADD_SPELL_EFFECT
+          INT_VAR
+            insert_point = 0  // add on top
+            opcode = 176      // Movement rate bonus 2
+            target = 2        // Preset target
+            parameter1 = speed_percent
+            parameter2 = 2    // Set % of
+            duration = 10
+          END
+          LPF ADD_SPELL_EFFECT
+          INT_VAR
+            insert_point = 1
+            opcode = 142      // Display portrait icon
+            target = 2        // Preset target
+            parameter2 = 38   // Haste
+            duration = 10
+          END
+        END
+
+        PATCH_IF (casting_speed) BEGIN
+          LPF ADD_SPELL_EFFECT
+          INT_VAR
+            insert_point = 0  // add on top
+            opcode = 188      // Aura Cleansing
+            target = 2        // Preset target
+            parameter2 = 1    // Stat value
+            duration = 10
+          END
+          LPF ADD_SPELL_EFFECT
+          INT_VAR
+            insert_point = 1
+            opcode = 142      // Display portrait icon
+            target = 2        // Preset target
+            parameter2 = 159  // Improved Alacrity
+            duration = 10
+          END
+          LPF ADD_SPELL_EFFECT
+          INT_VAR
+            insert_point = 2
+            opcode = 282      // Modify script state
+            target = 2        // Preset target
+            parameter1 = 1    // Stat value
+            parameter2 = 9    // Wizard Improved Alacrity
+            duration = 10
+          END
+        END
+
+        LPF ADD_SPELL_EFFECT
+        INT_VAR
+          insert_point = 0  // add on top
+          opcode = 328      // Set spell state
+          target = 2        // Preset target
+          parameter2 = slot_autohaste
+          timing = 0
+          duration = 10
+          special = 1       // use spell states from table
+        END
+
+        LPF ADD_SPELL_EFFECT
+        INT_VAR
+          insert_point = 0  // add on top
+          opcode = 321      // Remove effects by resource
+          target = 2        // Preset target
+          timing = 1
+        STR_VAR
+          resource = ~A7_WLK1~
+        END
+
+      COPY ~cdtweaks/spl/a7_wlk2.spl~ ~override~
+        LPF ADD_SPELL_EFFECT
+        INT_VAR
+          opcode = 321      // Remove effects by resource
+          target = 2        // Preset target
+          timing = 1
+        STR_VAR
+          resource = ~A7_WLK1~
+        END
+
+      // Apply to selected familiar-type followers
+      ACTION_DEFINE_ASSOCIATIVE_ARRAY cre_defs BEGIN
+        // CRE resref => CRE script name
+        ~a7afaaq~ => ~a7afaaq~
+        ~c#bran01~ => ~c#brandock~
+        ~c#grey02~ => ~c#grey~
+        ~c#sola12~ => ~c#solaufein~
+      END
+      ACTION_PHP_EACH cre_defs AS resref => name BEGIN
+        ACTION_IF (FILE_EXISTS_IN_GAME ~%resref%.cre~) BEGIN
+          COPY ~cdtweaks/baf/a7#haste_splstate_special.baf~ ~cdtweaks/baf/a7#haste_splstate_special.baf~
+            READ_ASCII 0 script (BUFFER_LENGTH)
+          BUT_ONLY
+          OUTER_TEXT_SPRINT suffix ~%name%~
+          LAF A7_ADD_GLOBAL_SCRIPT
+            INT_VAR extend_top = 1
+            STR_VAR script
+          END
+        END
+      END
+
+      // Apply to party members and familiar
+      OUTER_FOR (i = 7; i >= 1; --i) BEGIN
+        ACTION_IF (i = 7) BEGIN
+          OUTER_TEXT_SPRINT suffix ~F~
+          OUTER_TEXT_SPRINT player ~Familiar~
+        END ELSE BEGIN
+          OUTER_TEXT_SPRINT suffix ~P%i%~
+          OUTER_TEXT_SPRINT player ~Player%i%~
+        END
+        COPY ~cdtweaks/baf/a7#haste_splstate.baf~ ~cdtweaks/baf/a7#haste_splstate.baf~
+          READ_ASCII 0 script (BUFFER_LENGTH)
+        BUT_ONLY
+        LAF A7_ADD_GLOBAL_SCRIPT
+          INT_VAR extend_top = 1
+          STR_VAR script
+        END
+      END
+
+      // Give Player1 ability to control auto-haste via innate ability
+      LAM __A7_INSTALL_ABILITY
+
+      OUTER_SET success = 1
     END
-  END
-
-  ACTION_IF (slot_autohaste >= 0) BEGIN
-    COPY ~cdtweaks/spl/a7_wlk1.spl~ ~override~
-      LPF ADD_SPELL_EFFECT
-      INT_VAR
-        insert_point = 0  // add on top
-        opcode = 328      // Set spell state
-        target = 2        // Preset target
-        parameter2 = slot_autohaste
-        timing = 0
-        duration = 10
-        special = 1       // use spell states from table
-      END
-      LPF ADD_SPELL_EFFECT
-      INT_VAR
-        insert_point = 0  // add on top
-        opcode = 321      // Remove effects by resource
-        target = 2        // Preset target
-        timing = 1
-      STR_VAR
-        resource = ~A7_WLK1~
-      END
-      LPF ALTER_SPELL_EFFECT
-      INT_VAR
-        match_opcode = 176  // Movement rate bonus 2
-        parameter1 = speed_percent
-      END
-
-    COPY ~cdtweaks/spl/a7_wlk2.spl~ ~override~
-      LPF ADD_SPELL_EFFECT
-      INT_VAR
-        opcode = 321      // Remove effects by resource
-        target = 2        // Preset target
-        timing = 1
-      STR_VAR
-        resource = ~A7_WLK1~
-      END
-
-    LAF A7_ADD_GLOBAL_SCRIPT
-      INT_VAR extend_top = 1
-      STR_VAR script_file = ~cdtweaks/baf/a7#haste_splstate.baf~
-    END
-
-
-    // Give Player1 ability to control auto-haste via innate ability
-    LAM __A7_INSTALL_ABILITY
-
-    OUTER_SET success = 1
   END
 END
 
@@ -108,87 +191,160 @@ END
 // Installs increased movement speed outside of combat via secondary type removal (compatible with: EE games, classic games + TobEx)
 DEFINE_ACTION_FUNCTION A7_INSTALL_AUTOHASTE_SECTYPE
 INT_VAR
+  casting_speed = 0
+  movement_speed = 1
   speed_percent = 100
 RET
   success
 BEGIN
   OUTER_SET success = 0
 
-  ACTION_IF (speed_percent <= 0) BEGIN
-    OUTER_SET speed_percent = 100
-  END
-
-  // Install auto-haste functionality
-  OUTER_SET slot_autohaste = "-1"
-  COPY_EXISTING ~msectype.2da~ ~override~
-    COUNT_2DA_ROWS 1 numRows
-    SET slot_autohaste = numRows - 3  // exclude 2DA header rows
-  BUT_ONLY IF_EXISTS
-
-  ACTION_IF (slot_autohaste >= 0 && slot_autohaste <= 255) BEGIN
-      OUTER_SET strref_speed_off = (GAME_IS ~bgee bg2ee iwdee eet~) ? "-1" : RESOLVE_STR_REF(@333020) // Movement speed bonus removed
-    APPEND ~msectype.2da~ ~A7_AUTOHASTE     %strref_speed_off%~
-
-    OUTER_FOR (idx = 1; idx <= 2; ++idx) BEGIN
-      CREATE ~eff~ ~a7_wlk%idx%~
-        WRITE_LONG 0x10 187 // opcode
-        WRITE_LONG 0x14 1   // target
-        WRITE_LONG 0x1c (2 - idx) // parameter1
-        WRITE_LONG 0x24 9   // timing
-        WRITE_LONG 0x2c 100 // probability1
-        WRITE_ASCII 0xa8 ~A7_AutoHasteActive~ (32)  // variable name
+  ACTION_IF (casting_speed || movement_speed) BEGIN
+    ACTION_IF (speed_percent <= 0) BEGIN
+      OUTER_SET speed_percent = 100
     END
 
-    COPY ~cdtweaks/spl/a7_wlk1a.spl~ ~override~
-      WRITE_BYTE 0x27 slot_autohaste
+    // Install auto-haste functionality
+    OUTER_SET slot_autohaste = "-1"
+    COPY_EXISTING ~msectype.2da~ ~override~
+      COUNT_2DA_ROWS 1 numRows
+      SET slot_autohaste = numRows - 3  // exclude 2DA header rows
+    BUT_ONLY IF_EXISTS
 
-    COPY ~cdtweaks/spl/a7_wlk1.spl~ ~override~
-      WRITE_BYTE 0x27 slot_autohaste
-      LPF ADD_SPELL_EFFECT
-      INT_VAR
-        insert_point = 0  // add on top
-        opcode = 177      // Use EFF file
-        target = 2        // Preset target
-        parameter2 = 2    // target=EA/ANYONE
-        timing = 1
-      STR_VAR
-        resource = ~A7_WLK1~
-      END
-      LPF ALTER_SPELL_EFFECT
-      INT_VAR
-        match_opcode = 176  // Movement rate bonus 2
-        parameter1 = speed_percent
-      END
+    ACTION_IF (slot_autohaste >= 0 && slot_autohaste <= 255) BEGIN
+        OUTER_SET strref_speed_off = (GAME_IS ~bgee bg2ee iwdee eet~) ? "-1" : RESOLVE_STR_REF(@333070) // Movement speed bonus removed
+      APPEND ~msectype.2da~ ~A7_AUTOHASTE     %strref_speed_off%~
 
-    COPY ~cdtweaks/spl/a7_wlk2.spl~ ~override~
-      LPF ADD_SPELL_EFFECT
-      INT_VAR
-        opcode = 177      // Use EFF file
-        target = 2        // Preset target
-        parameter2 = 2    // target=EA/ANYONE
-        timing = 1
-      STR_VAR
-        resource = ~A7_WLK2~
-      END
-      LPF ADD_SPELL_EFFECT
-      INT_VAR
-        opcode = 221      // Remove spell type protections
-        target = 2        // Preset target
-        parameter1 = 10   // maximum level
-        parameter2 = slot_autohaste // secondary type
-        timing = 1
+      OUTER_FOR (idx = 1; idx <= 2; ++idx) BEGIN
+        CREATE ~eff~ ~a7_wlk%idx%~
+          WRITE_LONG 0x10 187 // opcode
+          WRITE_LONG 0x14 1   // target
+          WRITE_LONG 0x1c (2 - idx) // parameter1
+          WRITE_LONG 0x24 9   // timing
+          WRITE_LONG 0x2c 100 // probability1
+          WRITE_ASCII 0xa8 ~A7_AutoHasteActive~ (32)  // variable name
       END
 
-    LAF A7_ADD_GLOBAL_SCRIPT
-      INT_VAR extend_top = 1
-      STR_VAR script_file = ~cdtweaks/baf/a7#haste_sectype.baf~
+      COPY ~cdtweaks/spl/a7_wlk1a.spl~ ~override~
+        WRITE_BYTE 0x27 slot_autohaste
+
+      COPY ~cdtweaks/spl/a7_wlk1.spl~ ~override~
+        WRITE_BYTE 0x27 slot_autohaste
+        PATCH_IF (movement_speed) BEGIN
+          LPF ADD_SPELL_EFFECT
+          INT_VAR
+            insert_point = 0  // add on top
+            opcode = 176      // Movement rate bonus 2
+            target = 2        // Preset target
+            parameter1 = speed_percent
+            parameter2 = 2    // Set % of
+            duration = 10
+          END
+          LPF ADD_SPELL_EFFECT
+          INT_VAR
+            insert_point = 1
+            opcode = 142      // Display portrait icon
+            target = 2        // Preset target
+            parameter2 = 38   // Haste
+            duration = 10
+          END
+        END
+        PATCH_IF (casting_speed) BEGIN
+          LPF ADD_SPELL_EFFECT
+          INT_VAR
+            insert_point = 0  // add on top
+            opcode = 188      // Aura Cleansing
+            target = 2        // Preset target
+            parameter2 = 1    // Stat value
+            duration = 10
+          END
+          LPF ADD_SPELL_EFFECT
+          INT_VAR
+            insert_point = 1
+            opcode = 142      // Display portrait icon
+            target = 2        // Preset target
+            parameter2 = 159  // Improved Alacrity
+            duration = 10
+          END
+        END
+
+        LPF ADD_SPELL_EFFECT
+        INT_VAR
+          insert_point = 0  // add on top
+          opcode = 177      // Use EFF file
+          target = 2        // Preset target
+          parameter2 = 2    // target=EA/ANYONE
+          timing = 1
+        STR_VAR
+          resource = ~A7_WLK1~
+        END
+
+      COPY ~cdtweaks/spl/a7_wlk2.spl~ ~override~
+        LPF ADD_SPELL_EFFECT
+        INT_VAR
+          opcode = 177      // Use EFF file
+          target = 2        // Preset target
+          parameter2 = 2    // target=EA/ANYONE
+          timing = 1
+        STR_VAR
+          resource = ~A7_WLK2~
+        END
+        LPF ADD_SPELL_EFFECT
+        INT_VAR
+          opcode = 221      // Remove spell type protections
+          target = 2        // Preset target
+          parameter1 = 10   // maximum level
+          parameter2 = slot_autohaste // secondary type
+          timing = 1
+        END
+
+      // Apply to familiars and selected familiar-type followers
+      ACTION_DEFINE_ASSOCIATIVE_ARRAY cre_defs BEGIN
+        // CRE resref => CRE script name
+        ~famcat~ => ~famcat~
+        ~famdust~ => ~famdust~
+        ~famfair~ => ~famfair~
+        ~famfer~ => ~famfer~
+        ~famimp~ => ~famimp~
+        ~fampsd~ => ~fampsd~
+        ~famquas~ => ~famquas~
+        ~famrab~ => ~famrab~
+        ~a7afaaq~ => ~a7afaaq~
+        ~c#bran01~ => ~c#brandock~
+        ~c#grey02~ => ~c#grey~
+        ~c#sola12~ => ~c#solaufein~
+      END
+      ACTION_PHP_EACH cre_defs AS resref => name BEGIN
+        ACTION_IF (FILE_EXISTS_IN_GAME ~%resref%.cre~) BEGIN
+          COPY ~cdtweaks/baf/a7#haste_sectype_special.baf~ ~cdtweaks/baf/a7#haste_sectype_special.baf~
+            READ_ASCII 0 script (BUFFER_LENGTH)
+          BUT_ONLY
+          OUTER_TEXT_SPRINT suffix ~%name%~
+          LAF A7_ADD_GLOBAL_SCRIPT
+            INT_VAR extend_top = 1
+            STR_VAR script
+          END
+        END
+      END
+
+      // Apply to party members
+      OUTER_FOR (i = 6; i >= 1; --i) BEGIN
+        OUTER_TEXT_SPRINT suffix ~P%i%~
+        OUTER_TEXT_SPRINT player ~Player%i%~
+        COPY ~cdtweaks/baf/a7#haste_sectype.baf~ ~cdtweaks/baf/a7#haste_sectype.baf~
+          READ_ASCII 0 script (BUFFER_LENGTH)
+        BUT_ONLY
+        LAF A7_ADD_GLOBAL_SCRIPT
+          INT_VAR extend_top = 1
+          STR_VAR script
+        END
+      END
+
+      // Give Player1 ability to control auto-haste via innate ability
+      LAM __A7_INSTALL_ABILITY
+
+      OUTER_SET success = 1
     END
-
-
-    // Give Player1 ability to control auto-haste via innate ability
-    LAM __A7_INSTALL_ABILITY
-
-    OUTER_SET success = 1
   END
 END
 
@@ -260,12 +416,24 @@ END
 DEFINE_ACTION_MACRO __A7_INSTALL_ABILITY
 BEGIN
   COPY ~cdtweaks/spl/a7_hst1.spl~ ~override~
-    SAY NAME1 @333010 // Disable auto-haste
-    SAY UNIDENTIFIED_DESC @333011 // ...
+    SAY NAME1 @333050 // Disable auto-haste
+    PATCH_IF (movement_speed && casting_speed) BEGIN
+      SAY UNIDENTIFIED_DESC @333052 // ...
+    END ELSE PATCH_IF (NOT movement_speed && casting_speed) BEGIN
+      SAY UNIDENTIFIED_DESC @333053 // ...
+    END ELSE BEGIN
+      SAY UNIDENTIFIED_DESC @333051 // ...
+    END
 
   COPY ~cdtweaks/spl/a7_hst2.spl~ ~override~
-    SAY NAME1 @333012 // Enable auto-haste
-    SAY UNIDENTIFIED_DESC @333013 // ...
+    SAY NAME1 @333060 // Enable auto-haste
+    PATCH_IF (movement_speed && casting_speed) BEGIN
+      SAY UNIDENTIFIED_DESC @333062 // ...
+    END ELSE PATCH_IF (NOT movement_speed && casting_speed) BEGIN
+      SAY UNIDENTIFIED_DESC @333063 // ...
+    END ELSE BEGIN
+      SAY UNIDENTIFIED_DESC @333061 // ...
+    END
 
   OUTER_FOR (idx = 1; idx <= 2; ++idx) BEGIN
     CREATE ~eff~ ~a7_hst%idx%~

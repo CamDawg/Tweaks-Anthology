@@ -1,212 +1,36 @@
-// Controls auto-haste of party members (EE 2.0+ solution)
+// Controls auto-haste of party members and familiar (EE 2.0+ solution)
 
 IF
   Global("A7_AutoHasteActive","GLOBAL",1)
   OR(2)
-    !GlobalTimerNotExpired("A7_AutoHasteTimerP1","GLOBAL")
-    !CheckSpellState(Player1,A7_AUTO_SPEED)
-  !TriggerOverride(Player1,Detect([ENEMY]))
+    !GlobalTimerNotExpired("A7_AutoHasteTimer%suffix%","GLOBAL")
+    !CheckSpellState(%player%,A7_AUTO_SPEED)
+  !TriggerOverride(%player%,Detect([ENEMY]))
   !ActuallyInCombat()
 THEN
   RESPONSE #100
-    SetGlobalTimer("A7_AutoHasteTimerP1","GLOBAL",6)
-    ApplySpellRES("a7_wlk1",Player1)
+    SetGlobalTimer("A7_AutoHasteTimer%suffix%","GLOBAL",6)
+    ApplySpellRES("a7_wlk1",%player%)
     Continue()
 END
 
 IF
   Global("A7_AutoHasteActive","GLOBAL",1)
+  CheckSpellState(%player%,A7_AUTO_SPEED)
   OR(2)
-    !GlobalTimerNotExpired("A7_AutoHasteTimerP2","GLOBAL")
-    !CheckSpellState(Player2,A7_AUTO_SPEED)
-  !TriggerOverride(Player2,Detect([ENEMY]))
-  !ActuallyInCombat()
-THEN
-  RESPONSE #100
-    SetGlobalTimer("A7_AutoHasteTimerP2","GLOBAL",6)
-    ApplySpellRES("a7_wlk1",Player2)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  OR(2)
-    !GlobalTimerNotExpired("A7_AutoHasteTimerP3","GLOBAL")
-    !CheckSpellState(Player3,A7_AUTO_SPEED)
-  !TriggerOverride(Player3,Detect([ENEMY]))
-  !ActuallyInCombat()
-THEN
-  RESPONSE #100
-    SetGlobalTimer("A7_AutoHasteTimerP3","GLOBAL",6)
-    ApplySpellRES("a7_wlk1",Player3)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  OR(2)
-    !GlobalTimerNotExpired("A7_AutoHasteTimerP4","GLOBAL")
-    !CheckSpellState(Player4,A7_AUTO_SPEED)
-  !TriggerOverride(Player4,Detect([ENEMY]))
-  !ActuallyInCombat()
-THEN
-  RESPONSE #100
-    SetGlobalTimer("A7_AutoHasteTimerP4","GLOBAL",6)
-    ApplySpellRES("a7_wlk1",Player4)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  OR(2)
-    !GlobalTimerNotExpired("A7_AutoHasteTimerP5","GLOBAL")
-    !CheckSpellState(Player5,A7_AUTO_SPEED)
-  !TriggerOverride(Player5,Detect([ENEMY]))
-  !ActuallyInCombat()
-THEN
-  RESPONSE #100
-    SetGlobalTimer("A7_AutoHasteTimerP5","GLOBAL",6)
-    ApplySpellRES("a7_wlk1",Player5)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  OR(2)
-    !GlobalTimerNotExpired("A7_AutoHasteTimerP6","GLOBAL")
-    !CheckSpellState(Player6,A7_AUTO_SPEED)
-  !TriggerOverride(Player6,Detect([ENEMY]))
-  !ActuallyInCombat()
-THEN
-  RESPONSE #100
-    SetGlobalTimer("A7_AutoHasteTimerP6","GLOBAL",6)
-    ApplySpellRES("a7_wlk1",Player6)
-    Continue()
-END
-
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  CheckSpellState(Player1,A7_AUTO_SPEED)
-  OR(2)
-    TriggerOverride(Player1,Detect([ENEMY]))
+    TriggerOverride(%player%,Detect([ENEMY]))
     ActuallyInCombat()
 THEN
   RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player1)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  CheckSpellState(Player2,A7_AUTO_SPEED)
-  OR(2)
-    TriggerOverride(Player2,Detect([ENEMY]))
-    ActuallyInCombat()
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player2)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  CheckSpellState(Player3,A7_AUTO_SPEED)
-  OR(2)
-    TriggerOverride(Player3,Detect([ENEMY]))
-    ActuallyInCombat()
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player3)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  CheckSpellState(Player4,A7_AUTO_SPEED)
-  OR(2)
-    TriggerOverride(Player4,Detect([ENEMY]))
-    ActuallyInCombat()
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player4)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  CheckSpellState(Player5,A7_AUTO_SPEED)
-  OR(2)
-    TriggerOverride(Player5,Detect([ENEMY]))
-    ActuallyInCombat()
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player5)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",1)
-  CheckSpellState(Player6,A7_AUTO_SPEED)
-  OR(2)
-    TriggerOverride(Player6,Detect([ENEMY]))
-    ActuallyInCombat()
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player6)
+    ApplySpellRES("a7_wlk2",%player%)
     Continue()
 END
 
 IF
   Global("A7_AutoHasteActive","GLOBAL",0)
-  CheckSpellState(Player1,A7_AUTO_SPEED)
+  CheckSpellState(%player%,A7_AUTO_SPEED)
 THEN
   RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player1)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",0)
-  CheckSpellState(Player2,A7_AUTO_SPEED)
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player2)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",0)
-  CheckSpellState(Player3,A7_AUTO_SPEED)
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player3)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",0)
-  CheckSpellState(Player4,A7_AUTO_SPEED)
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player4)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",0)
-  CheckSpellState(Player5,A7_AUTO_SPEED)
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player5)
-    Continue()
-END
-
-IF
-  Global("A7_AutoHasteActive","GLOBAL",0)
-  CheckSpellState(Player6,A7_AUTO_SPEED)
-THEN
-  RESPONSE #100
-    ApplySpellRES("a7_wlk2",Player6)
+    ApplySpellRES("a7_wlk2",%player%)
     Continue()
 END
